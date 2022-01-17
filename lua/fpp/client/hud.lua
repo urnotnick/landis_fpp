@@ -43,6 +43,14 @@ local HUDNotes = {}
 
 --Notify ripped off the Sandbox notify, changed to my likings
 function FPP.AddNotify( str, type )
+
+    -- This allows impulse Framework servers (Landis) to use our custom built notification system.
+    -- Doing this gives our UI more consistency.
+    -- You can still use this version of FPP without impulse Framework.
+    if impulse then -- impulse notify is BETTTER!!!!!!!!!!!!!
+        return LocalPlayer():Notify(str) -- though, all occurances of FPP.Notify should be replaced with LocalPlayer():Notify()
+    end
+
     local tab = {}
     tab.text    = str
     tab.recv    = SysTime()
@@ -72,7 +80,9 @@ function FPP.AddNotify( str, type )
     ply:EmitSound("npc/turret_floor/click1.wav", 10, 100)
 end
 
-usermessage.Hook("FPP_Notify", function(u) FPP.AddNotify(u:ReadString(), u:ReadBool()) end)
+net.Receive("FPP_Notify", function() 
+    FPP.AddNotify(net.ReadString(), net.ReadBool())
+end)
 
 local function DrawNotice(k, v, i)
 

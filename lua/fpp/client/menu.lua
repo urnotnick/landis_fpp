@@ -1157,7 +1157,8 @@ end
 hook.Add("SpawnMenuOpen", "FPPMenus", UpdateMenus)
 
 function FPP.SharedMenu(um)
-    local ent = um:ReadEntity()
+    LocalPlayer():Notify("freddy fazbear")
+    local ent = net.ReadEntity()
     local frame = vgui.Create("DFrame")
     if not IsValid(ent) then frame:Close() return end
     frame:SetTitle("Share " .. ent:GetClass())
@@ -1197,20 +1198,13 @@ function FPP.SharedMenu(um)
         end
         box:SizeToContents()
     end
-    AddChk("Physgun", "SharePhysgun1", um:ReadBool())
-    AddChk("Gravgun", "ShareGravgun1", um:ReadBool())
-    AddChk("Use", "SharePlayerUse1", um:ReadBool())
-    AddChk("Damage", "ShareEntityDamage1", um:ReadBool())
-    AddChk("Toolgun", "ShareToolgun1", um:ReadBool())
+    AddChk("Physgun", "SharePhysgun1", net.ReadBool())
+    AddChk("Gravgun", "ShareGravgun1", net.ReadBool())
+    AddChk("Use", "SharePlayerUse1", net.ReadBool())
+    AddChk("Damage", "ShareEntityDamage1", net.ReadBool())
+    AddChk("Toolgun", "ShareToolgun1", net.ReadBool())
 
-    local long = um:ReadLong()
-    local SharedWith = {}
-
-    if long > 0 then
-        for i = 1, long do
-            table.insert(SharedWith, um:ReadEntity())
-        end
-    end
+    local SharedWith = net.ReadTable()
 
     if player.GetCount() ~= 1 then
         count = count + 1
@@ -1231,7 +1225,7 @@ function FPP.SharedMenu(um)
     frame:SetSize(math.Min(math.Max(165 + (row - 1) * 165, 165), ScrW()), height)
     frame:Center()
 end
-usermessage.Hook("FPP_ShareSettings", FPP.SharedMenu)
+net.Receive("FPP_ShareSettings", FPP.SharedMenu)
 
 properties.Add("addFPPBlocked",
 {

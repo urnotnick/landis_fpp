@@ -26,11 +26,23 @@ function TOOL:RightClick(trace)
     return true
 end
 
+local rateLimitShareSettings = CurTime() + 1
+
+if SERVER then
+    util.AddNetworkString("FPP_ShareSettings")
+end
+
 function TOOL:LeftClick(trace)
+
+    if rateLimitShareSettings > CurTime() then
+        return true -- RATE LIMIT!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    end
+    rateLimitShareSettings = CurTime() + 1
+
     local ent = trace.Entity
     if not IsValid(ent) or CLIENT then return true end
 
-    local ply = self:GetOwner()
+    local ply = self.GetOwner(self) -- micro-optimization! :trollface:
 
     if ent:CPPIGetOwner() ~= ply then
         FPP.Notify(ply, "You do not have the right to share this entity.", false)
@@ -44,20 +56,18 @@ function TOOL:LeftClick(trace)
     local Toolgun = ent.ShareToolgun1 or false
 
     -- This big usermessage will be too big if you select 63 players, since that will not happen I can't be arsed to solve it
-    umsg.Start("FPP_ShareSettings", ply)
-        umsg.Entity(ent)
-        umsg.Bool(Physgun)
-        umsg.Bool(GravGun)
-        umsg.Bool(PlayerUse)
-        umsg.Bool(Damage)
-        umsg.Bool(Toolgun)
-        if ent.AllowedPlayers then
-            umsg.Long(#ent.AllowedPlayers)
-            for _, v in ipairs(ent.AllowedPlayers) do
-                umsg.Entity(v)
-            end
-        end
-    umsg.End()
+    -- ^ DUMB WAY TO DO THINGS (THIS LEADS TO CRASHES) - nick
+    
+    net.Start("FPP_ShareSettings")
+        net.WriteEntity(ent)
+        net.WriteBool(Physgun)
+        net.WriteBool(GravGun)
+        net.WriteBool(PlayerUse)
+        net.WriteBool(Damage)
+        net.WriteBool(Toolgun)
+        net.WriteTable(ent.AllowedPlayers or {})
+    net.Send(ply)
+    
     return true
 end
 

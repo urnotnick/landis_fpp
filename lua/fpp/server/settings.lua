@@ -4,6 +4,7 @@ util.AddNetworkString("FPP_Groups")
 util.AddNetworkString("FPP_GroupMembers")
 util.AddNetworkString("FPP_RestrictedToolList")
 util.AddNetworkString("FPP_BlockedModels")
+util.AddNetworkString("FPP_Notify") -- ew
 
 FPP.Blocked = FPP.Blocked or {}
     FPP.Blocked.Physgun1 = FPP.Blocked.Physgun1 or {}
@@ -26,18 +27,19 @@ function FPP.Notify(ply, text, bool)
         ServerLog(text)
         return
     end
-    umsg.Start("FPP_Notify", ply)
-        umsg.String(text)
-        umsg.Bool(bool)
-    umsg.End()
-    ply:PrintMessage(HUD_PRINTCONSOLE, text)
+    net.Start("FPP_Notify")
+        net.WriteString(text)
+        net.WriteBool(bool)
+    net.Send(ply)
+    if not impulse then ply:PrintMessage(HUD_PRINTCONSOLE, text) end
 end
 
 function FPP.NotifyAll(text, bool)
-    umsg.Start("FPP_Notify")
-        umsg.String(text)
-        umsg.Bool(bool)
-    umsg.End()
+    net.Start("FPP_Notify")
+        net.WriteString(text)
+        net.WriteBool(bool)
+    net.Broadcast()
+    if impulse then return end -- dont do printall for impulse
     for _, ply in ipairs(player.GetAll()) do
         ply:PrintMessage(HUD_PRINTCONSOLE, text)
     end
