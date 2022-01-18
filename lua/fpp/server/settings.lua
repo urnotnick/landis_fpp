@@ -139,6 +139,10 @@ local function runIfAccess(priv, f)
 end
 
 local function FPP_SetSetting(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1] then FPP.Notify(ply, "FPP_setting: First argument (setting name) not given!", false) return end
     if not args[3] then FPP.Notify(ply, "FPP_setting: Third argument (the value of the setting) not given", false) return end
     if not FPP.Settings[args[1]] then
@@ -173,6 +177,10 @@ end
 concommand.Add("FPP_setting", runIfAccess("FPP_Settings", FPP_SetSetting))
 
 local function AddBlocked(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1]              then FPP.Notify(ply, "FPP_AddBlocked: Block list not given", false) return end
     if not args[2]              then FPP.Notify(ply, "FPP_AddBlocked: Entity to block not given", false) return end
     if not FPP.Blocked[args[1]] then FPP.Notify(ply, ("FPP_AddBlocked: Block list %s does not exist"):format(args[1]), false) return end
@@ -203,6 +211,10 @@ local function getIntendedBlockedModels(model, ent)
 end
 
 local function AddBlockedModel(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1] then FPP.Notify(ply, "FPP_AddBlockedModel: Model not given", false) return end
 
     local models = getIntendedBlockedModels(args[1], tonumber(args[2]) and Entity(args[2]) or nil)
@@ -217,6 +229,10 @@ end
 concommand.Add("FPP_AddBlockedModel", runIfAccess("FPP_Settings", AddBlockedModel))
 
 local function RemoveBlocked(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1]              then FPP.Notify(ply, "FPP_RemoveBlocked: Block list not given", false) return end
     if not args[2]              then FPP.Notify(ply, "FPP_RemoveBlocked: Entity to block not given", false) return end
     if not FPP.Blocked[args[1]] then FPP.Notify(ply, ("FPP_RemoveBlocked: Block list %s does not exist"):format(args[1]), false) return end
@@ -230,6 +246,10 @@ end
 concommand.Add("FPP_RemoveBlocked", runIfAccess("FPP_Settings", RemoveBlocked))
 
 local function RemoveBlockedModel(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1] then FPP.Notify(ply, "FPP_RemoveBlockedModel: Model not given", false) return end
     local models = getIntendedBlockedModels(args[1], tonumber(args[2]) and Entity(args[2]) or nil)
 
@@ -250,6 +270,10 @@ local allowedShares = {
     ShareToolgun1 = true
 }
 local function ShareProp(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 1
     if not args[1]                  then FPP.Notify(ply, "FPP_ShareProp: Entity not given", false) return end
     if not IsValid(Entity(args[1])) then FPP.Notify(ply, "FPP_ShareProp: Entity not valid", false) return end
     if not args[2]                  then FPP.Notify(ply, "FPP_ShareProp: Player to share with not given", false) return end
@@ -519,6 +543,10 @@ end
 hook.Add("PlayerInitialSpawn", "FPP_SendSettings", SendSettings)
 
 local function AddGroup(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1] then FPP.Notify(ply, "Invalid argument(s)", false) return end-- Args: 1 = name, optional: 2 = allowdefault
     local name = string.lower(args[1])
     local allowdefault = tonumber(args[2]) or 1
@@ -549,6 +577,10 @@ hook.Add("InitPostEntity", "FPP_Load_CAMI", function()
 end)
 
 local function RemoveGroup(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1] then FPP.Notify(ply, "Invalid argument(s)", false) return end-- Args: 1 = name
     local name = string.lower(args[1])
 
@@ -576,6 +608,10 @@ end
 concommand.Add("FPP_RemoveGroup", runIfAccess("FPP_Settings", RemoveGroup))
 
 local function GroupChangeAllowDefault(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[2] then FPP.Notify(ply, "Invalid argument(s)", false) return end-- Args: 1 = groupname, 2 = new value 1/0
 
     local name = string.lower(args[1])
@@ -593,6 +629,10 @@ end
 concommand.Add("FPP_ChangeGroupStatus", runIfAccess("FPP_Settings", GroupChangeAllowDefault))
 
 local function GroupAddTool(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[2] then FPP.Notify(ply, "Invalid argument(s)", false) return end-- Args: 1 = groupname, 2 = tool
 
     local name = args[1]
@@ -618,6 +658,10 @@ end
 concommand.Add("FPP_AddGroupTool", runIfAccess("FPP_Settings", GroupAddTool))
 
 local function GroupRemoveTool(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[2] then FPP.Notify(ply, "Invalid argument(s)", false) return end-- Args: 1 = groupname, 2 = tool
 
     local name = args[1]
@@ -647,6 +691,10 @@ concommand.Add("FPP_RemoveGroupTool", runIfAccess("FPP_Settings", GroupRemoveToo
 
 -- Args: 1 = player, 2 = group
 local function PlayerSetGroup(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[2] then FPP.Notify(ply, "Group not given", false) return end
 
     local name = args[1]
@@ -672,6 +720,10 @@ end
 concommand.Add("FPP_SetPlayerGroup", runIfAccess("FPP_Settings", PlayerSetGroup))
 
 local function SendGroupData(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     net.Start("FPP_Groups")
         net.WriteTable(FPP.Groups)
     net.Send(ply)
@@ -679,6 +731,10 @@ end
 concommand.Add("FPP_SendGroups", runIfAccess("FPP_Settings", SendGroupData))
 
 local function SendGroupMemberData(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     net.Start("FPP_GroupMembers")
         net.WriteTable(FPP.GroupMembers)
     net.Send(ply)
@@ -686,6 +742,10 @@ end
 concommand.Add("FPP_SendGroupMembers", runIfAccess("FPP_Settings", SendGroupMemberData))
 
 local function SendBlocked(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1] or not FPP.Blocked[args[1]] then return end
 
     ply.FPPUmsg1 = ply.FPPUmsg1 or {}
@@ -703,6 +763,10 @@ end
 concommand.Add("FPP_sendblocked", SendBlocked)
 
 local function SendBlockedModels(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     ply.FPPUmsg2 = ply.FPPUmsg2 or 0
     if ply.FPPUmsg2 > CurTime() - 10 then return end
     ply.FPPUmsg2 = CurTime()
@@ -722,6 +786,10 @@ end
 concommand.Add("FPP_sendblockedmodels", SendBlockedModels)
 
 local function SendRestrictedTools(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     ply.FPPUmsg3 = ply.FPPUmsg3 or 0
     if ply.FPPUmsg3 > CurTime() - 5 then return end
     ply.FPPUmsg3 = CurTime()
@@ -746,6 +814,10 @@ local function setFallbackOwner(ply, fallback)
 end
 
 local function changeFallbackOwner(ply, _, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     local fallback = tonumber(args[1]) and Player(tonumber(args[1]))
 
     if tonumber(args[1]) == -1 then
@@ -786,6 +858,10 @@ local function changeBuddies(ply, buddy, settings)
 end
 
 local function SetBuddy(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[6] then FPP.Notify(ply, "FPP_SetBuddy: Not enough arguments given!", false) return end
     local buddy = tonumber(args[1]) and Player(tonumber(args[1]))
     if not IsValid(buddy) then FPP.Notify(ply, "Player invalid", false) return end
@@ -799,6 +875,10 @@ end
 concommand.Add("FPP_SetBuddy", SetBuddy)
 
 local function CleanupDisconnected(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[1] then FPP.Notify(ply, "Invalid argument", false) return end
     if args[1] == "disconnected" then
         for _, v in ipairs(ents.GetAll()) do
@@ -825,6 +905,10 @@ end
 concommand.Add("FPP_Cleanup", runIfAccess("FPP_Cleanup", CleanupDisconnected))
 
 local function SetToolRestrict(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[3] then FPP.Notify(ply, "Invalid argument(s)", false) return end--FPP_restricttool <toolname> <type(admin/team)> <toggle(1/0)>
     local toolname = args[1]
     local RestrictWho = tonumber(args[2]) or args[2]-- "team" or "admin"
@@ -863,6 +947,10 @@ end
 concommand.Add("FPP_restricttool", runIfAccess("FPP_Settings", SetToolRestrict))
 
 local function RestrictToolPerson(ply, cmd, args)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     if not args[3] then FPP.Notify(ply, "Invalid argument(s)", false) return end--FPP_restricttoolperson <toolname> <userid> <disallow, allow, remove(0,1,2)>
 
     local toolname = args[1]
@@ -887,6 +975,10 @@ end
 concommand.Add("FPP_restricttoolplayer", runIfAccess("FPP_Settings", RestrictToolPerson))
 
 local function resetAllSetting(ply)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     MySQLite.begin()
     MySQLite.queueQuery("DELETE FROM FPP_PHYSGUN1")
     MySQLite.queueQuery("DELETE FROM FPP_GRAVGUN1")
@@ -908,6 +1000,10 @@ end
 concommand.Add("FPP_ResetAllSettings", runIfAccess("FPP_Settings", resetAllSetting))
 
 local function resetBlockedModels(ply)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     FPP.BlockedModels = {}
 
     MySQLite.query("DELETE FROM FPP_BLOCKEDMODELS1", FPP.AddDefaultBlockedModels)
@@ -916,6 +1012,10 @@ end
 concommand.Add("FPP_ResetBlockedModels", runIfAccess("FPP_Settings", resetBlockedModels))
 
 local function refreshPrivatePlayerSettings(ply)
+    if (ply.nextFPPConCommand or 0) > CurTime() then
+        return
+    end
+    ply.nextFPPConCommand = CurTime() + 0.5
     timer.Remove("FPP_RefreshPrivatePlayerSettings" .. ply:EntIndex())
 
     timer.Create("FPP_RefreshPrivatePlayerSettings" .. ply:EntIndex(), 4, 1, function() FPP.recalculateCanTouch({ply}, ents.GetAll()) end)
